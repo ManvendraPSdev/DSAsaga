@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing frontend dependencies...
+      - cd client && npm install && cd ..
+      - echo Installing backend dependencies...
+      - cd server && npm install --production && cd ..
+  build:
+    commands:
+      - echo Building frontend...
+      - cd client && npm run build && cd ..
+      - echo Moving frontend build to server folder...
+      - rm -rf server/dist
+      - mv client/dist server/
+artifacts:
+  files:
+    - '**/*'
+  base-directory: server
