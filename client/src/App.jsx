@@ -14,6 +14,8 @@ import {
     Problem,
 } from "./pages";
 import { initializeAuth } from "./store/slices/userSlice";
+import { ThemeProvider } from "./context/ThemeContext";
+import { LoadingScreen } from "./components";
 
 const App = () => {
     const dispatch = useDispatch();
@@ -26,30 +28,29 @@ const App = () => {
     // Show loading screen while checking authentication
     if (isInitializing) {
         return (
-            <div className="min-h-screen bg-black flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-300">Loading...</p>
-                </div>
-            </div>
+            <ThemeProvider>
+                <LoadingScreen />
+            </ThemeProvider>
         );
     }
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/create-problem" element={<CreateProblem />} />
-                <Route path="/edit-problem/:id" element={<EditProblem />} />
-                <Route path="/problems" element={<Problems />} />
-                <Route path="/my-problems" element={<MyProblems />} />
-                <Route path="/admin/users" element={<AdminUsers />} />
-                <Route path="/problems/:id" element={<Problem />} />
-            </Routes>
-        </BrowserRouter>
+        <ThemeProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/create-problem" element={<CreateProblem />} />
+                    <Route path="/edit-problem/:id" element={<EditProblem />} />
+                    <Route path="/problems" element={<Problems />} />
+                    <Route path="/my-problems" element={<MyProblems />} />
+                    <Route path="/admin/users" element={<AdminUsers />} />
+                    <Route path="/problems/:id" element={<Problem />} />
+                </Routes>
+            </BrowserRouter>
+        </ThemeProvider>
     );
 };
 

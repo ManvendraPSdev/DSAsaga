@@ -5,6 +5,7 @@ import { Layout } from "../components";
 import { useApiCall } from "../hooks";
 import authService from "../services/authService";
 import { setUser } from "../store/slices/userSlice";
+import { useTheme } from "../context/ThemeContext";
 
 const Profile = () => {
     const { user } = useSelector((state) => state.user);
@@ -13,6 +14,7 @@ const Profile = () => {
     const [updateLoading, setUpdateLoading] = useState(false);
     const [updateError, setUpdateError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const { isDark } = useTheme();
 
     const [formData, setFormData] = useState({
         name: "",
@@ -103,234 +105,174 @@ const Profile = () => {
     }
 
     return (
-        <Layout showNavbar={false}>
+        <Layout>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-3xl font-bold text-slate-900">
-                            My Profile
-                        </h1>
-                        <Link
-                            to="/"
-                            className="text-blue-600 hover:text-blue-500 text-sm font-medium"
-                        >
-                            ← Back to Home
-                        </Link>
-                    </div>
-                    <p className="mt-2 text-slate-600">
-                        Manage your account settings and preferences.
+                    <h1 className={`text-3xl font-bold mb-2 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        Profile
+                    </h1>
+                    <p className={`transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                        Manage your account settings and preferences
                     </p>
                 </div>
 
-                {/* Error Messages */}
-                {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
-                        {error}
-                    </div>
-                )}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Profile Information */}
+                    <div className="lg:col-span-2">
+                        <div className={`p-6 rounded-xl border transition-colors duration-300 ${isDark ? 'glass-card border-white/10' : 'bg-white border-gray-200'}`}>
+                            <h2 className={`text-xl font-semibold mb-6 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                Profile Information
+                            </h2>
+                            
+                            {error && (
+                                <div className={`mb-6 p-3 border rounded-lg text-sm transition-colors duration-300 ${isDark ? 'bg-red-500/20 border-red-500/30 text-red-300' : 'bg-red-50 border-red-200 text-red-600'}`}>
+                                    {error}
+                                </div>
+                            )}
+                            
+                            {successMessage && (
+                                <div className={`mb-6 p-3 border rounded-lg text-sm transition-colors duration-300 ${isDark ? 'bg-green-500/20 border-green-500/30 text-green-300' : 'bg-green-50 border-green-200 text-green-600'}`}>
+                                    {successMessage}
+                                </div>
+                            )}
 
-                {updateError && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
-                        {updateError}
-                    </div>
-                )}
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className={`block text-sm font-medium mb-2 transition-colors duration-300 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                                            Full Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${isDark ? 'glass-input' : 'border-gray-300'}`}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className={`block text-sm font-medium mb-2 transition-colors duration-300 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                                            Username
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="username"
+                                            value={formData.username}
+                                            onChange={handleChange}
+                                            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${isDark ? 'glass-input' : 'border-gray-300'}`}
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label className={`block text-sm font-medium mb-2 transition-colors duration-300 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${isDark ? 'glass-input' : 'border-gray-300'}`}
+                                    />
+                                </div>
 
-                {successMessage && (
-                    <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-600 rounded-lg">
-                        {successMessage}
-                    </div>
-                )}
-
-                {/* Profile Card */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    {/* Profile Header */}
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-8">
-                        <div className="flex items-center space-x-6">
-                            <div className="relative">
-                                <img
-                                    src={
-                                        formData.avatar ||
-                                        "https://images.unsplash.com/photo-1740252117012-bb53ad05e370?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                    }
-                                    alt="Profile"
-                                    className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
-                                />
-                                <div className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-white rounded-full"></div>
-                            </div>
-                            <div className="text-white">
-                                <h2 className="text-2xl font-bold">
-                                    {formData.name || "User"}
-                                </h2>
-                                <p className="text-blue-100">
-                                    @{formData.username || "username"}
-                                </p>
-                                <div className="flex items-center mt-2">
-                                    <svg
-                                        className="w-4 h-4 mr-2"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
+                                <div>
+                                    <label
+                                        htmlFor="avatar"
+                                        className={`block text-sm font-medium mb-2 transition-colors duration-300 ${isDark ? 'text-gray-200' : 'text-slate-700'}`}
                                     >
-                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                                    </svg>
-                                    <span className="text-blue-100">
-                                        {formData.email}
+                                        Avatar URL
+                                    </label>
+                                    <input
+                                        type="url"
+                                        id="avatar"
+                                        name="avatar"
+                                        value={formData.avatar}
+                                        onChange={handleChange}
+                                        className={`w-full px-3 py-3 border rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'border-slate-300'}`}
+                                        placeholder="https://example.com/avatar.jpg"
+                                    />
+                                    <p className={`mt-1 text-sm transition-colors duration-300 ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
+                                        Enter a URL to your profile picture
+                                    </p>
+                                </div>
+
+                                <div className="flex justify-end">
+                                    <button
+                                        type="submit"
+                                        disabled={updateLoading}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {updateLoading ? "Updating..." : "Update Profile"}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    {/* Profile Stats */}
+                    <div className="space-y-6">
+                        {/* Profile Card */}
+                        <div className={`p-6 rounded-xl border transition-colors duration-300 ${isDark ? 'glass-card border-white/10' : 'bg-white border-gray-200'}`}>
+                            <div className="text-center">
+                                <img
+                                    src={user?.avatar || "https://images.unsplash.com/photo-1740252117012-bb53ad05e370?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
+                                    alt={user?.name || "User"}
+                                    className={`w-20 h-20 rounded-full mx-auto mb-4 border ${isDark ? 'border-white/20' : 'border-gray-300'}`}
+                                />
+                                <h3 className={`text-lg font-semibold mb-1 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                    {user?.name || user?.username}
+                                </h3>
+                                <p className={`text-sm transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                    {user?.email}
+                                </p>
+                                <div className={`mt-3 px-3 py-1 rounded-full text-xs font-medium inline-block transition-colors duration-300 ${isDark ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-800'}`}>
+                                    {user?.role}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Stats */}
+                        <div className={`p-6 rounded-xl border transition-colors duration-300 ${isDark ? 'glass-card border-white/10' : 'bg-white border-gray-200'}`}>
+                            <h3 className={`text-lg font-semibold mb-4 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                Statistics
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <span className={`transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        Problems Solved
+                                    </span>
+                                    <span className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                        {user?.stats?.problemsSolved || 0}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className={`transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        Problems Attempted
+                                    </span>
+                                    <span className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                        {user?.stats?.totalSubmissions || 0}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className={`transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        Success Rate
+                                    </span>
+                                    <span className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                        {user?.stats?.acceptedSubmissions
+                                            ? Math.round(
+                                                  (user.stats.acceptedSubmissions /
+                                                      user.stats.totalSubmissions) *
+                                                      100
+                                              )
+                                            : 0}
+                                        %
                                     </span>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Statistics Section */}
-                        <div className="mt-8 grid grid-cols-3 gap-4">
-                            <div className="bg-white bg-opacity-10 rounded-lg p-4">
-                                <div className="text-3xl font-bold text-black">
-                                    {user?.stats?.problemsSolved || 0}
-                                </div>
-                                <div className="text-blue-500 text-sm">
-                                    Problems Solved
-                                </div>
-                            </div>
-                            <div className="bg-white bg-opacity-10 rounded-lg p-4">
-                                <div className="text-3xl font-bold text-black">
-                                    {user?.stats?.totalSubmissions || 0}
-                                </div>
-                                <div className="text-blue-500 text-sm">
-                                    Total Submissions
-                                </div>
-                            </div>
-                            <div className="bg-white bg-opacity-10 rounded-lg p-4">
-                                <div className="text-3xl font-bold text-black">
-                                    {user?.stats?.acceptedSubmissions
-                                        ? Math.round(
-                                              (user.stats.acceptedSubmissions /
-                                                  user.stats.totalSubmissions) *
-                                                  100
-                                          )
-                                        : 0}
-                                    %
-                                </div>
-                                <div className="text-blue-500 text-sm">
-                                    Success Rate
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Profile Form */}
-                    <div className="p-6">
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label
-                                        htmlFor="name"
-                                        className="block text-sm font-medium text-slate-700 mb-2"
-                                    >
-                                        Full Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                        placeholder="Enter your full name"
-                                        required
-                                    />
-                                </div>
-
-                                <div>
-                                    <label
-                                        htmlFor="username"
-                                        className="block text-sm font-medium text-slate-700 mb-2"
-                                    >
-                                        Username
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="username"
-                                        name="username"
-                                        value={formData.username}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                        placeholder="Choose a username"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="email"
-                                    className="block text-sm font-medium text-slate-700 mb-2"
-                                >
-                                    Email Address
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    placeholder="Enter your email address"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="avatar"
-                                    className="block text-sm font-medium text-slate-700 mb-2"
-                                >
-                                    Avatar URL
-                                </label>
-                                <input
-                                    type="url"
-                                    id="avatar"
-                                    name="avatar"
-                                    value={formData.avatar}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-3 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    placeholder="https://example.com/avatar.jpg"
-                                />
-                                <p className="mt-1 text-sm text-slate-500">
-                                    Enter a URL to your profile picture
-                                </p>
-                            </div>
-
-                            <div className="flex justify-end space-x-4 pt-6 border-t border-slate-200">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        // Reset form to original user data
-                                        if (user) {
-                                            setFormData({
-                                                name: user.name || "",
-                                                username: user.username || "",
-                                                email: user.email || "",
-                                                avatar: user.avatar || "",
-                                            });
-                                        }
-                                        setUpdateError("");
-                                        setSuccessMessage("");
-                                    }}
-                                    className="px-6 py-3 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                                >
-                                    Reset
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={updateLoading}
-                                    className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    {updateLoading
-                                        ? "Updating..."
-                                        : "Update Profile"}
-                                </button>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>

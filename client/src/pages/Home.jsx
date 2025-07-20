@@ -1,17 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "../components";
+import { useTheme } from "../context/ThemeContext";
 
 const Home = () => {
+    const { isDark } = useTheme();
+
     return (
         <Layout>
             {/* Hero Section */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <div className="text-center">
-                    <h2 className="text-5xl font-bold text-white mb-6">
+                    <h2 className={`text-5xl font-bold mb-6 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                         Master Algorithms & Data Structures
                     </h2>
-                    <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                    <p className={`text-xl mb-8 max-w-3xl mx-auto transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                         Practice coding problems, improve your skills, and
                         prepare for technical interviews with our comprehensive
                         online judge platform.
@@ -25,7 +28,7 @@ const Home = () => {
                         </Link>
                         <Link
                             to="/problems"
-                            className="border border-gray-600 hover:border-gray-500 text-gray-300 px-8 py-3 rounded-lg text-lg font-medium transition-colors inline-block text-center"
+                            className={`border px-8 py-3 rounded-lg text-lg font-medium transition-colors inline-block text-center ${isDark ? 'border-white/20 hover:border-white/40 text-gray-300 hover:text-white glass-card-hover' : 'border-gray-300 hover:border-gray-400 text-gray-700'}`}
                         >
                             View Problems
                         </Link>
@@ -36,10 +39,10 @@ const Home = () => {
             {/* Features */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="grid md:grid-cols-3 gap-8">
-                    <div className="bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-800">
-                        <div className="w-12 h-12 bg-blue-900 rounded-lg flex items-center justify-center mb-4">
+                    <div className={`p-8 rounded-xl shadow-sm border transition-colors duration-300 ${isDark ? 'glass-card glass-card-hover border-white/10' : 'bg-white border-gray-200'}`}>
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 transition-colors duration-300 ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
                             <svg
-                                className="w-6 h-6 text-blue-400"
+                                className={`w-6 h-6 transition-colors duration-300 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -52,19 +55,19 @@ const Home = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">
+                        <h3 className={`text-xl font-semibold mb-2 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                             Curated Problems
                         </h3>
-                        <p className="text-gray-300">
+                        <p className={`transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                             Hand-picked algorithmic challenges from easy to
                             expert level to help you grow progressively.
                         </p>
                     </div>
 
-                    <div className="bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-800">
-                        <div className="w-12 h-12 bg-green-900 rounded-lg flex items-center justify-center mb-4">
+                    <div className={`p-8 rounded-xl shadow-sm border transition-colors duration-300 ${isDark ? 'glass-card glass-card-hover border-white/10' : 'bg-white border-gray-200'}`}>
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 transition-colors duration-300 ${isDark ? 'bg-green-500/20' : 'bg-green-100'}`}>
                             <svg
-                                className="w-6 h-6 text-green-400"
+                                className={`w-6 h-6 transition-colors duration-300 ${isDark ? 'text-green-400' : 'text-green-600'}`}
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -77,19 +80,19 @@ const Home = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">
+                        <h3 className={`text-xl font-semibold mb-2 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                             Instant Feedback
                         </h3>
-                        <p className="text-gray-300">
+                        <p className={`transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                             Get immediate results with detailed test case
                             feedback and execution time analysis.
                         </p>
                     </div>
 
-                    <div className="bg-gray-900 p-8 rounded-xl shadow-sm border border-gray-800">
-                        <div className="w-12 h-12 bg-purple-900 rounded-lg flex items-center justify-center mb-4">
+                    <div className={`p-8 rounded-xl shadow-sm border transition-colors duration-300 ${isDark ? 'glass-card glass-card-hover border-white/10' : 'bg-white border-gray-200'}`}>
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 transition-colors duration-300 ${isDark ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
                             <svg
-                                className="w-6 h-6 text-purple-400"
+                                className={`w-6 h-6 transition-colors duration-300 ${isDark ? 'text-purple-400' : 'text-purple-600'}`}
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -102,10 +105,10 @@ const Home = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">
+                        <h3 className={`text-xl font-semibold mb-2 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                             Track Progress
                         </h3>
-                        <p className="text-gray-300">
+                        <p className={`transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                             Monitor your improvement with detailed statistics
                             and performance analytics.
                         </p>

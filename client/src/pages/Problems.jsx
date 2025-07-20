@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout } from "../components";
 import { useApiCall } from "../hooks";
 import problemService from "../services/problemService";
+import { useTheme } from "../context/ThemeContext";
 
 const Problems = () => {
     const { loading, error, execute } = useApiCall();
@@ -22,6 +23,7 @@ const Problems = () => {
         tags: "",
     });
     const [allTags, setAllTags] = useState([]);
+    const { isDark } = useTheme();
 
     useEffect(() => {
         const fetchProblems = async () => {
@@ -111,7 +113,7 @@ const Problems = () => {
             default:
                 return (
                     <svg
-                        className="w-5 h-5 text-gray-300"
+                        className={`w-5 h-5 ${isDark ? 'text-gray-600' : 'text-gray-300'}`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                     >
@@ -139,7 +141,7 @@ const Problems = () => {
         return (
             <Layout>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg p-4">
+                    <div className={`border rounded-lg p-4 transition-colors duration-300 ${isDark ? 'bg-red-900 border-red-700 text-red-300' : 'bg-red-50 border-red-200 text-red-600'}`}>
                         {error}
                     </div>
                 </div>
@@ -151,160 +153,148 @@ const Problems = () => {
         <Layout>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        Problem Set
+                <div className="mb-8">
+                    <h1 className={`text-3xl font-bold mb-2 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        Coding Problems
                     </h1>
-                    <Link
-                        to="/create-problem"
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                        Create Problem
-                    </Link>
+                    <p className={`transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                        Practice algorithms and data structures with our curated collection of problems
+                    </p>
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white rounded-lg shadow mb-6">
-                    <div className="p-4 flex flex-wrap gap-4">
-                        <div className="flex-1 min-w-[200px]">
+                <div className={`mb-6 p-6 rounded-xl border transition-colors duration-300 ${isDark ? 'glass-card border-white/10' : 'bg-white border-gray-200'}`}>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label className={`block text-sm font-medium mb-2 transition-colors duration-300 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                                Difficulty
+                            </label>
+                            <select
+                                value={filters.difficulty}
+                                onChange={(e) => setFilters({ ...filters, difficulty: e.target.value })}
+                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${isDark ? 'glass-input' : 'border-gray-300'}`}
+                            >
+                                <option value="">All Difficulties</option>
+                                <option value="easy">Easy</option>
+                                <option value="medium">Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className={`block text-sm font-medium mb-2 transition-colors duration-300 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                                Category
+                            </label>
+                            <select
+                                value={filters.category}
+                                onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${isDark ? 'glass-input' : 'border-gray-300'}`}
+                            >
+                                <option value="">All Categories</option>
+                                <option value="arrays">Arrays</option>
+                                <option value="strings">Strings</option>
+                                <option value="linked-lists">Linked Lists</option>
+                                <option value="trees">Trees</option>
+                                <option value="graphs">Graphs</option>
+                                <option value="dynamic-programming">Dynamic Programming</option>
+                                <option value="greedy">Greedy</option>
+                                <option value="backtracking">Backtracking</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className={`block text-sm font-medium mb-2 transition-colors duration-300 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                                Status
+                            </label>
+                            <select
+                                value={filters.status}
+                                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${isDark ? 'glass-input' : 'border-gray-300'}`}
+                            >
+                                <option value="">All Problems</option>
+                                <option value="solved">Solved</option>
+                                <option value="attempted">Attempted</option>
+                                <option value="unsolved">Unsolved</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className={`block text-sm font-medium mb-2 transition-colors duration-300 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                                Search
+                            </label>
                             <input
                                 type="text"
                                 placeholder="Search problems..."
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 value={filters.search}
-                                onChange={(e) =>
-                                    handleFilterChange("search", e.target.value)
-                                }
+                                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${isDark ? 'glass-input' : 'border-gray-300'}`}
                             />
                         </div>
-                        <select
-                            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={filters.difficulty}
-                            onChange={(e) =>
-                                handleFilterChange("difficulty", e.target.value)
-                            }
-                        >
-                            <option value="all">All Difficulties</option>
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
-                        </select>
-                        <select
-                            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={filters.tags}
-                            onChange={(e) =>
-                                handleFilterChange("tags", e.target.value)
-                            }
-                        >
-                            <option value="">All Tags</option>
-                            {allTags.map((tag) => (
-                                <option key={tag} value={tag}>
-                                    {tag}
-                                </option>
-                            ))}
-                        </select>
-                        <select
-                            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={filters.status}
-                            onChange={(e) =>
-                                handleFilterChange("status", e.target.value)
-                            }
-                        >
-                            <option value="all">All Status</option>
-                            <option value="Solved">Solved</option>
-                            <option value="Attempted">Attempted</option>
-                            <option value="Unsolved">Unsolved</option>
-                        </select>
                     </div>
                 </div>
 
-                {/* Problems Table */}
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Title
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Tags
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Difficulty
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                {/* Problems Grid */}
+                {loading ? (
+                    <div className="flex justify-center items-center py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                    </div>
+                ) : (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                             {problems.map((problem) => (
-                                <tr
+                                <div
                                     key={problem._id}
-                                    className="hover:bg-gray-50"
+                                    className={`p-6 rounded-xl border transition-all duration-300 hover:shadow-lg ${isDark ? 'glass-card glass-card-hover border-white/10' : 'bg-white border-gray-200 hover:border-gray-300'}`}
                                 >
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {getStatusIcon(problem.status)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <Link
-                                            to={`/problems/${problem._id}`}
-                                            className="text-blue-600 hover:text-blue-800 font-medium"
-                                        >
+                                    <div className="flex justify-between items-start mb-4">
+                                        <h3 className={`text-lg font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                             {problem.title}
-                                        </Link>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex flex-wrap gap-1">
+                                        </h3>
+                                        <span
+                                            className={`px-2 py-1 rounded-full text-xs font-medium transition-colors duration-300 ${
+                                                problem.difficulty === "Easy"
+                                                    ? "bg-green-100 text-green-800"
+                                                    : problem.difficulty === "Medium"
+                                                    ? "bg-yellow-100 text-yellow-800"
+                                                    : "bg-red-100 text-red-800"
+                                            }`}
+                                        >
+                                            {problem.difficulty}
+                                        </span>
+                                    </div>
+                                    <p className={`text-sm mb-4 transition-colors duration-300 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        {problem.description.substring(0, 100)}...
+                                    </p>
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex space-x-2">
                                             {problem.tags
                                                 ?.slice(0, 3)
                                                 .map((tag, index) => (
                                                     <span
                                                         key={index}
-                                                        className="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full"
+                                                        className={`px-2 py-1 text-xs rounded-full transition-colors duration-300 ${isDark ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-600'}`}
                                                     >
                                                         {tag}
                                                     </span>
                                                 ))}
                                             {problem.tags?.length > 3 && (
-                                                <span className="px-2 py-1 bg-gray-50 text-gray-500 text-xs rounded-full">
+                                                <span className={`px-2 py-1 text-xs rounded-full transition-colors duration-300 ${isDark ? 'bg-gray-800 text-gray-400' : 'bg-gray-50 text-gray-500'}`}>
                                                     +{problem.tags.length - 3}{" "}
                                                     more
                                                 </span>
                                             )}
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            className={`font-medium ${getDifficultyColor(
-                                                problem.difficulty
-                                            )}`}
+                                        <Link
+                                            to={`/problems/${problem._id}`}
+                                            className="text-blue-600 hover:text-blue-800 font-medium"
                                         >
-                                            {problem.difficulty}
-                                        </span>
-                                    </td>
-                                </tr>
+                                            View Problem →
+                                        </Link>
+                                    </div>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
-
-                    {problems.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                            No problems found matching your criteria
                         </div>
-                    )}
-                </div>
 
-                {/* Pagination */}
-                {pagination.totalPages > 1 && (
-                    <div className="bg-white rounded-lg shadow mt-6 px-6 py-4">
-                        <div className="flex items-center justify-between">
-                            <div className="text-sm text-gray-700">
-                                Showing page {pagination.currentPage} of{" "}
-                                {pagination.totalPages} (
-                                {pagination.totalProblems} total problems)
-                            </div>
-                            <div className="flex items-center space-x-2">
+                        {/* Pagination */}
+                        {pagination.totalPages > 1 && (
+                            <div className={`flex justify-center items-center space-x-2 p-4 rounded-xl border transition-colors duration-300 ${isDark ? 'glass-card border-white/10' : 'bg-white border-gray-200'}`}>
                                 <button
                                     onClick={() =>
                                         handlePageChange(
@@ -312,55 +302,52 @@ const Problems = () => {
                                         )
                                     }
                                     disabled={!pagination.hasPrevPage}
-                                    className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isDark ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`}
                                 >
                                     Previous
                                 </button>
-
-                                {/* Page numbers */}
-                                <div className="flex space-x-1">
-                                    {Array.from(
-                                        {
-                                            length: Math.min(
-                                                5,
-                                                pagination.totalPages
-                                            ),
-                                        },
-                                        (_, i) => {
-                                            const pageNum = Math.max(
-                                                1,
-                                                Math.min(
-                                                    pagination.currentPage -
-                                                        2 +
-                                                        i,
-                                                    pagination.totalPages -
-                                                        4 +
-                                                        i
-                                                )
-                                            );
-                                            return pageNum <=
-                                                pagination.totalPages ? (
-                                                <button
-                                                    key={pageNum}
-                                                    onClick={() =>
-                                                        handlePageChange(
-                                                            pageNum
-                                                        )
-                                                    }
-                                                    className={`px-3 py-2 text-sm font-medium rounded-md ${
-                                                        pageNum ===
-                                                        pagination.currentPage
-                                                            ? "bg-blue-600 text-white"
-                                                            : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-                                                    }`}
-                                                >
-                                                    {pageNum}
-                                                </button>
-                                            ) : null;
-                                        }
-                                    )}
-                                </div>
-
+                                {Array.from(
+                                    {
+                                        length: Math.min(
+                                            5,
+                                            pagination.totalPages
+                                        ),
+                                    },
+                                    (_, i) => {
+                                        const pageNum = Math.max(
+                                            1,
+                                            Math.min(
+                                                pagination.currentPage -
+                                                    2 +
+                                                    i,
+                                                pagination.totalPages -
+                                                    4 +
+                                                    i
+                                            )
+                                        );
+                                        return pageNum <=
+                                            pagination.totalPages ? (
+                                            <button
+                                                key={pageNum}
+                                                onClick={() =>
+                                                    handlePageChange(
+                                                        pageNum
+                                                    )
+                                                }
+                                                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                                                    pageNum ===
+                                                    pagination.currentPage
+                                                        ? "bg-blue-600 text-white"
+                                                        : isDark 
+                                                            ? "text-gray-300 hover:text-white hover:bg-white/10"
+                                                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                                                }`}
+                                            >
+                                                {pageNum}
+                                            </button>
+                                        ) : null;
+                                    }
+                                )}
                                 <button
                                     onClick={() =>
                                         handlePageChange(
@@ -368,13 +355,13 @@ const Problems = () => {
                                         )
                                     }
                                     disabled={!pagination.hasNextPage}
-                                    className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isDark ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`}
                                 >
                                     Next
                                 </button>
                             </div>
-                        </div>
-                    </div>
+                        )}
+                    </>
                 )}
             </div>
         </Layout>
